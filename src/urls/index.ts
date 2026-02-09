@@ -21,6 +21,7 @@ export const BUY_URL = '/buy';
 export const ALCHEMY_PAY_URL = BUY_URL;
 // export const ONRAMP_URL = BUY_URL;
 export const SNAP_URL = '/snap';
+export const POINTS_URL = '/points/*';
 
 export const addressReplacer = (url: string, address1: string, address2?: string): string => {
   const replaced = url.replace(':address1', address1);

@@ -1,0 +1,206 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------
+   Scoped reset for Points inside reef-app
+   reef-app loads Bootstrap + global styles that can leak into /points
+   (e.g. link underlines, button borders). We emulate key preflight bits
+   but scope everything to #points-root so it doesn't affect the rest.
+------------------------------------------------------------------- */
+
+#points-root,
+#points-root * {
+  box-sizing: border-box;
+}
+
+#points-root a {
+  color: inherit;
+  text-decoration: none;
+}
+
+#points-root button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+}
+
+#points-root button:focus,
+#points-root button:focus-visible {
+  outline: none;
+}
+
+#points-root table {
+  border-collapse: collapse;
+  text-indent: 0;
+}
+
+/* Remove default paragraph margins that leak in from Bootstrap/UA styles */
+#points-root p {
+  margin: 0;
+}
+
+/* Remove default heading margins that leak in from Bootstrap/UA styles */
+#points-root h1,
+#points-root h2,
+#points-root h3,
+#points-root h4,
+#points-root h5,
+#points-root h6 {
+  margin: 0;
+}
+
+/* ------------------------------------------------------------------
+   Bootstrap compatibility overrides
+   Bootstrap ships spacing utilities (p-*, px-*, py-*, gap-*, etc) with
+   `!important`, which can override Tailwind values in the Points subtree.
+   We re-assert the Tailwind spacing values with `!important`, scoped to
+   #points-root, including responsive variants used by the Points pages.
+------------------------------------------------------------------- */
+
+/* Text alignment utilities (Bootstrap uses !important and can block Tailwind responsive variants) */
+#points-root .text-left {
+  text-align: left !important;
+}
+#points-root .text-center {
+  text-align: center !important;
+}
+#points-root .text-right {
+  text-align: right !important;
+}
+
+@media (min-width: 768px) {
+  #points-root .md\:text-left {
+    text-align: left !important;
+  }
+  #points-root .md\:text-center {
+    text-align: center !important;
+  }
+  #points-root .md\:text-right {
+    text-align: right !important;
+  }
+}
+
+/* Base spacing (Tailwind scale) */
+#points-root .p-1 {
+  padding: 0.25rem !important;
+}
+#points-root .p-2 {
+  padding: 0.5rem !important;
+}
+#points-root .p-3 {
+  padding: 0.75rem !important;
+}
+#points-root .p-4 {
+  padding: 1rem !important;
+}
+
+#points-root .px-3 {
+  padding-left: 0.75rem !important;
+  padding-right: 0.75rem !important;
+}
+#points-root .px-4 {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+#points-root .py-1 {
+  padding-top: 0.25rem !important;
+  padding-bottom: 0.25rem !important;
+}
+#points-root .py-2 {
+  padding-top: 0.5rem !important;
+  padding-bottom: 0.5rem !important;
+}
+#points-root .py-3 {
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+}
+#points-root .py-4 {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+}
+
+#points-root .gap-2 {
+  gap: 0.5rem !important;
+}
+#points-root .gap-3 {
+  gap: 0.75rem !important;
+}
+#points-root .gap-4 {
+  gap: 1rem !important;
+}
+
+/* A few commonly-used margin utils that collide with Bootstrap */
+#points-root .mt-1 {
+  margin-top: 0.25rem !important;
+}
+#points-root .mt-2 {
+  margin-top: 0.5rem !important;
+}
+#points-root .mt-4 {
+  margin-top: 1rem !important;
+}
+#points-root .mb-1 {
+  margin-bottom: 0.25rem !important;
+}
+#points-root .mb-4 {
+  margin-bottom: 1rem !important;
+}
+#points-root .ml-1 {
+  margin-left: 0.25rem !important;
+}
+#points-root .mr-1 {
+  margin-right: 0.25rem !important;
+}
+#points-root .ml-3 {
+  margin-left: 0.75rem !important;
+}
+
+/* Responsive spacing used by Points pages */
+@media (min-width: 640px) {
+  #points-root .sm\:p-6 {
+    padding: 1.5rem !important;
+  }
+  #points-root .sm\:px-6 {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+  #points-root .sm\:py-3 {
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  #points-root .lg\:p-3 {
+    padding: 0.75rem !important;
+  }
+  #points-root .lg\:p-6 {
+    padding: 1.5rem !important;
+  }
+  #points-root .lg\:p-16 {
+    padding: 4rem !important;
+  }
+
+  #points-root .lg\:px-6 {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+  #points-root .lg\:px-16 {
+    padding-left: 4rem !important;
+    padding-right: 4rem !important;
+  }
+
+  #points-root .lg\:gap-6 {
+    gap: 1.5rem !important;
+  }
+  #points-root .lg\:mb-8 {
+    margin-bottom: 2rem !important;
+  }
+  #points-root .lg\:mt-4 {
+    margin-top: 1rem !important;
+  }
+}

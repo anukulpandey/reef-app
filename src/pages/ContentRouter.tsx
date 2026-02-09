@@ -1,12 +1,12 @@
-import { AddressToNumber, hooks, TokenWithAmount } from '@reef-chain/react-lib';
-import React, { useContext} from 'react';
+import { AddressToNumber, hooks, TokenWithAmount } from "@reef-chain/react-lib";
+import React, { useContext } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import axios from 'axios';
-import { tokenPriceUtils, tokenUtil } from '@reef-chain/util-lib';
-import NftContext from '../context/NftContext';
-import PoolContext from '../context/PoolContext';
-import TokenContext from '../context/TokenContext';
-import TokenPrices from '../context/TokenPricesContext';
+import axios from "axios";
+import { tokenPriceUtils, tokenUtil } from "@reef-chain/util-lib";
+import NftContext from "../context/NftContext";
+import PoolContext from "../context/PoolContext";
+import TokenContext from "../context/TokenContext";
+import TokenPrices from "../context/TokenPricesContext";
 import {
   ADD_LIQUIDITY_URL,
   ALCHEMY_PAY_URL,
@@ -19,29 +19,31 @@ import {
   // ONRAMP_URL,
   POOL_CHART_URL,
   POOLS_URL,
+  POINTS_URL,
   REMOVE_LIQUIDITY_URL,
   SNAP_URL,
   SPECIFIED_SWAP_URL,
   TRANSFER_TOKEN,
-} from '../urls';
-import Bind from './bind/Bind';
-import { Bonds } from './bonds/Bonds';
-import { Creator } from './creator/Creator';
-import Dashboard from './dashboard/Dashboard';
-import AddPoolLiquidity from './pools/AddLiquidity';
-import Pool from './pools/Pool/Pool';
-import Pools from './pools/Pools';
-import RemoveLiquidity from './pools/RemoveLiquidity';
-import Swap from './swap/Swap';
-import Buy from './buy/Buy';
-import Transfer from './transfer/Transfer';
-import { isReefswapUI } from '../environment';
-import Onramp from './onramp/Onramp';
-import ReefSigners from '../context/ReefSigners';
-import Snap from './snap/Snap';
-import { utils } from '@reef-chain/react-lib';
-import AlchemyPay from './alchemy-pay/AlchemyPay';
-import Validators from './validators/Validators';
+} from "../urls";
+import Bind from "./bind/Bind";
+import { Bonds } from "./bonds/Bonds";
+import { Creator } from "./creator/Creator";
+import Dashboard from "./dashboard/Dashboard";
+import AddPoolLiquidity from "./pools/AddLiquidity";
+import Pool from "./pools/Pool/Pool";
+import Pools from "./pools/Pools";
+import RemoveLiquidity from "./pools/RemoveLiquidity";
+import Swap from "./swap/Swap";
+import Buy from "./buy/Buy";
+import Transfer from "./transfer/Transfer";
+import { isReefswapUI } from "../environment";
+import Onramp from "./onramp/Onramp";
+import ReefSigners from "../context/ReefSigners";
+import Snap from "./snap/Snap";
+import { utils } from "@reef-chain/react-lib";
+import AlchemyPay from "./alchemy-pay/AlchemyPay";
+import Validators from "./validators/Validators";
+import PointsRoot from "../points/PointsRoot";
 
 const ContentRouter = (): JSX.Element => {
   const { reefState, selectedSigner } = useContext(ReefSigners);
@@ -50,7 +52,10 @@ const ContentRouter = (): JSX.Element => {
   // Its not appropriate to have token state in this component, but the problem was apollo client.
   // Once its declared properly in App move TokenContext in the parent component (App.tsx)
 
-  const tokens = hooks.useObservableState<TokenWithAmount[]|null>(reefState.selectedTokenPrices$, []);
+  const tokens = hooks.useObservableState<TokenWithAmount[] | null>(
+    reefState.selectedTokenPrices$,
+    []
+  );
 
   const [nfts, nftsLoading] = hooks.useAllNfts();
   const pools = hooks.useAllPools(axios);
@@ -66,58 +71,83 @@ const ContentRouter = (): JSX.Element => {
 
   return (
     <div className="content">
-      {(
-        <TokenContext.Provider value={{ tokens: tokens || [], loading: tokens === null && !(selectedSigner?.balance._hex === '0x00') }}>
+      {
+        <TokenContext.Provider
+          value={{
+            tokens: tokens || [],
+            loading:
+              tokens === null && !(selectedSigner?.balance._hex === "0x00"),
+          }}
+        >
           <NftContext.Provider value={{ nfts, loading: nftsLoading }}>
             <PoolContext.Provider value={pools}>
-              <TokenPrices.Provider value={tokenPrices as AddressToNumber<number>}>
+              <TokenPrices.Provider
+                value={tokenPrices as AddressToNumber<number>}
+              >
                 {!isReefswapUI && (
-                <Routes>
-                  <Route path={SPECIFIED_SWAP_URL} element={<Swap/>} />
-                  {/* <Route exact path={POOLS_URL} component={Pools} /> */}
-                  <Route path={DASHBOARD_URL} element={<Dashboard/>} />
-                  {/* <Route path={ADD_LIQUIDITY_URL} component={AddPoolLiquidity} /> */}
-                  {/* <Route exact path={ADD_LIQUIDITY_URL} component={AddPoolLiquidity} /> */}
-                  {/* <Route path={POOL_CHART_URL} component={Pool} /> */}
-                  {/* <Route path={REMOVE_LIQUIDITY_URL} component={RemoveLiquidity} /> */}
-                  <Route  path={TRANSFER_TOKEN} element={<Transfer/>} />
-                  <Route  path={CREATE_ERC20_TOKEN_URL} element={<Creator/>} />
-                  <Route  path={BONDS_URL} element={<Bonds/>} />
-                  <Route path={BIND_URL} element={<Bind/>} />
-                    <Route path={VALIDATORS_URL} element={<Validators/>} />
-                  {/* <Route path={BUY_URL} component={Buy} /> */}
-                  <Route path={ALCHEMY_PAY_URL} element={<AlchemyPay/>} />
-                  {/* <Route path={ONRAMP_URL} component={Onramp} /> */}
-                  <Route path={SNAP_URL} element={<Snap/>} />
-                  <Route path="/" element={<Navigate to={DASHBOARD_URL} />}  />
-                </Routes>
+                  <Routes>
+                    <Route path={POINTS_URL} element={<PointsRoot />} />
+                    <Route path={SPECIFIED_SWAP_URL} element={<Swap />} />
+                    {/* <Route exact path={POOLS_URL} component={Pools} /> */}
+                    <Route path={DASHBOARD_URL} element={<Dashboard />} />
+                    {/* <Route path={ADD_LIQUIDITY_URL} component={AddPoolLiquidity} /> */}
+                    {/* <Route exact path={ADD_LIQUIDITY_URL} component={AddPoolLiquidity} /> */}
+                    {/* <Route path={POOL_CHART_URL} component={Pool} /> */}
+                    {/* <Route path={REMOVE_LIQUIDITY_URL} component={RemoveLiquidity} /> */}
+                    <Route path={TRANSFER_TOKEN} element={<Transfer />} />
+                    <Route
+                      path={CREATE_ERC20_TOKEN_URL}
+                      element={<Creator />}
+                    />
+                    <Route path={BONDS_URL} element={<Bonds />} />
+                    <Route path={BIND_URL} element={<Bind />} />
+                    <Route path={VALIDATORS_URL} element={<Validators />} />
+                    {/* <Route path={BUY_URL} component={Buy} /> */}
+                    <Route path={ALCHEMY_PAY_URL} element={<AlchemyPay />} />
+                    {/* <Route path={ONRAMP_URL} component={Onramp} /> */}
+                    <Route path={SNAP_URL} element={<Snap />} />
+                    <Route path="/" element={<Navigate to={DASHBOARD_URL} />} />
+                  </Routes>
                 )}
 
                 {isReefswapUI && (
-                <Routes>
-                  <Route path={SPECIFIED_SWAP_URL} element={<Swap/>} />
-                  <Route path={POOLS_URL} element={<Pools/>} />
-                  <Route path={DASHBOARD_URL} element={<Dashboard/>} />
-                  <Route path={ADD_LIQUIDITY_URL} element={<AddPoolLiquidity/>} />
-                  <Route path={ADD_LIQUIDITY_URL} element={<AddPoolLiquidity/>} />
-                  <Route path={POOL_CHART_URL} element={<Pool/>} />
-                  <Route path={REMOVE_LIQUIDITY_URL} element={<RemoveLiquidity/>} />
-                  <Route path={TRANSFER_TOKEN} element={<Transfer/>} />
-                  <Route path={CREATE_ERC20_TOKEN_URL} element={<Creator/>} />
-                  <Route path={BONDS_URL} element={<Bonds/>} />
-                  <Route path={BIND_URL} element={<Bind/>} />
-                  {/* <Route path={BUY_URL} component={Buy} /> */}
-                  <Route path={ALCHEMY_PAY_URL} element={<AlchemyPay/>} />
-                  {/* <Route path={ONRAMP_URL} component={Onramp} /> */}
-                  <Route path={SNAP_URL} element={<Snap/>} />
-                  <Route path="/" element={<Navigate to={DASHBOARD_URL} />} />
-                </Routes>
+                  <Routes>
+                    <Route path={POINTS_URL} element={<PointsRoot />} />
+                    <Route path={SPECIFIED_SWAP_URL} element={<Swap />} />
+                    <Route path={POOLS_URL} element={<Pools />} />
+                    <Route path={DASHBOARD_URL} element={<Dashboard />} />
+                    <Route
+                      path={ADD_LIQUIDITY_URL}
+                      element={<AddPoolLiquidity />}
+                    />
+                    <Route
+                      path={ADD_LIQUIDITY_URL}
+                      element={<AddPoolLiquidity />}
+                    />
+                    <Route path={POOL_CHART_URL} element={<Pool />} />
+                    <Route
+                      path={REMOVE_LIQUIDITY_URL}
+                      element={<RemoveLiquidity />}
+                    />
+                    <Route path={TRANSFER_TOKEN} element={<Transfer />} />
+                    <Route
+                      path={CREATE_ERC20_TOKEN_URL}
+                      element={<Creator />}
+                    />
+                    <Route path={BONDS_URL} element={<Bonds />} />
+                    <Route path={BIND_URL} element={<Bind />} />
+                    {/* <Route path={BUY_URL} component={Buy} /> */}
+                    <Route path={ALCHEMY_PAY_URL} element={<AlchemyPay />} />
+                    {/* <Route path={ONRAMP_URL} component={Onramp} /> */}
+                    <Route path={SNAP_URL} element={<Snap />} />
+                    <Route path="/" element={<Navigate to={DASHBOARD_URL} />} />
+                  </Routes>
                 )}
               </TokenPrices.Provider>
             </PoolContext.Provider>
           </NftContext.Provider>
         </TokenContext.Provider>
-      )}
+      }
     </div>
   );
 };

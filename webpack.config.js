@@ -14,7 +14,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.?js$/,
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
         loader: "babel-loader",
       },
@@ -46,7 +46,14 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
+        use: [
+          "style-loader",
+          {
+            loader: "css-loader",
+            options: { importLoaders: 1 },
+          },
+          "postcss-loader",
+        ],
       },
       {
         test: /\.json$/,
@@ -60,7 +67,13 @@ module.exports = {
   },
 
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.cjs'],
+    extensions: ['.ts', '.tsx', '.js', '.jsx', '.cjs'],
+    alias: {
+      // @formo/analytics optionally requires `viem`. We don't use it directly, and
+      // some viem versions require TS5+ types which break our TS4 toolchain.
+      // This shim keeps the build green and makes analytics fall back gracefully.
+      viem: path.resolve(__dirname, 'src/shims/viem.js'),
+    },
     fallback: {
       'crypto': require.resolve('crypto-browserify'),
       'stream': require.resolve('stream-browserify'),
