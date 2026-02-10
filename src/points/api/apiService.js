@@ -153,12 +153,10 @@ const apiService = {
     }
   },
 
-  // Get daily leaderboard points
-
   getLeaderboardPoints: async (page = 1, limit = 20) => {
     try {
       const response = await axios.get(
-        `/points/daily-total-points?page=${page}&limit=${limit}`
+        `/points/total-points-per-user?page=${page}&limit=${limit}`
       );
       return response.data;
     } catch (error) {
