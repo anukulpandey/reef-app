@@ -10,6 +10,10 @@ import { useAuth } from "../contexts/AuthContext";
 
 export default function Home() {
   const [leaderboard, setLeaderboard] = useState([]);
+  const [leaderboardPagination, setLeaderboardPagination] = useState(null);
+  const [leaderboardPage, setLeaderboardPage] = useState(1);
+  const LEADERBOARD_PAGE_SIZE = 10;
+  const [leaderboardLoading, setLeaderboardLoading] = useState(false);
   const [weeklyStats, setWeeklyStats] = useState(null);
   const [referralInfo, setReferralInfo] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -108,12 +112,17 @@ export default function Home() {
   };
 
   const fetchDataWithoutAccount = async () => {
-    setLoading(true);
+    const isInitialLoad = leaderboard.length === 0;
+    if (isInitialLoad) setLoading(true);
+    else setLeaderboardLoading(true);
     setError(null);
 
     try {
       // Only call generic leaderboard when no account is connected
-      const leaderboardResponse = await apiService.getLeaderboardPoints();
+      const leaderboardResponse = await apiService.getLeaderboardPoints(
+        leaderboardPage,
+        LEADERBOARD_PAGE_SIZE
+      );
 
       // Handle general API response structure
       const leaderboardData = Array.isArray(leaderboardResponse)
@@ -121,6 +130,7 @@ export default function Home() {
         : leaderboardResponse.data || [];
 
       setLeaderboard(leaderboardData);
+      setLeaderboardPagination(leaderboardResponse.pagination || null);
 
       // Reset user-specific data when no account
       setReferralInfo(null);
@@ -132,6 +142,7 @@ export default function Home() {
       setError(err.message || "Failed to fetch leaderboard");
     } finally {
       setLoading(false);
+      setLeaderboardLoading(false);
     }
   };
 
@@ -145,10 +156,10 @@ export default function Home() {
     } else {
       fetchDataWithoutAccount();
     }
-  }, [selectedAccount]);
+  }, [selectedAccount, leaderboardPage]);
 
   // Show loading skeleton while data is being fetched
-  if (loading) {
+  if (loading && leaderboard.length === 0) {
     return (
       <div className="min-h-screen">
         <Header />
@@ -227,7 +238,12 @@ export default function Home() {
           hasUserPoints) && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
-              <LeaderboardTable data={leaderboard} />
+              <LeaderboardTable
+                data={leaderboard}
+                pagination={leaderboardPagination}
+                onPageChange={setLeaderboardPage}
+                isLoading={leaderboardLoading}
+              />
             </div>
 
             {/* Only show user stats and referral cards when account is connected and has points */}

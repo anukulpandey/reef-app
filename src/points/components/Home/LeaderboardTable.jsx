@@ -1,11 +1,11 @@
-import { useState } from "react";
-
-export default function LeaderboardTable({ data = [] }) {
-  console.log("🚀 ~ LeaderboardTable ~ data:", data);
-  const [page, setPage] = useState(1);
-  const pageSize = 10;
-  const totalPages = Math.ceil(data.length / pageSize);
-  const paginated = data.slice((page - 1) * pageSize, page * pageSize);
+export default function LeaderboardTable({
+  data = [],
+  pagination,
+  onPageChange,
+  isLoading = false,
+}) {
+  const page = pagination?.page ?? 1;
+  const totalPages = pagination?.totalPages ?? 1;
 
   return (
     <div className="">
@@ -34,7 +34,7 @@ export default function LeaderboardTable({ data = [] }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-[#F8F9FF] ">
-            {paginated.map((row, index) => {
+            {data.map((row, index) => {
               // Handle separator row
               if (row.isSeparator) {
                 return (
@@ -108,18 +108,18 @@ export default function LeaderboardTable({ data = [] }) {
           <div className="flex justify-center items-center gap-4 mt-4 shadow-lg rounded-lg bg-[#f8f9ff] py-3">
             <button
               className="px-3 py-1 sm:w-[8rem] w-[6rem] cursor-pointer rounded bg-gray-200 text-gray-700 font-medium disabled:opacity-50 shadow"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page === 1}
+              onClick={() => onPageChange?.(Math.max(1, page - 1))}
+              disabled={page === 1 || isLoading}
             >
               Previous
             </button>
             <span className="text-sm text-gray-700">
-              Page {page} of {totalPages}
+              {isLoading ? "Loading..." : `Page ${page} of ${totalPages}`}
             </span>
             <button
               className="px-3 py-1 rounded sm:w-[8rem] w-[6rem] cursor-pointer bg-gray-200 text-gray-700 font-medium disabled:opacity-50 shadow"
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={page === totalPages}
+              onClick={() => onPageChange?.(Math.min(totalPages, page + 1))}
+              disabled={page === totalPages || isLoading}
             >
               Next
             </button>

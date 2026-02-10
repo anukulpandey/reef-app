@@ -155,9 +155,11 @@ const apiService = {
 
   // Get daily leaderboard points
 
-  getLeaderboardPoints: async () => {
+  getLeaderboardPoints: async (page = 1, limit = 20) => {
     try {
-      const response = await axios.get("points/daily-total-points");
+      const response = await axios.get(
+        `/points/daily-total-points?page=${page}&limit=${limit}`
+      );
       return response.data;
     } catch (error) {
       throw (
