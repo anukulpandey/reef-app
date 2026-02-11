@@ -2,7 +2,7 @@ export default function LeaderboardTable({
   data = [],
   pagination,
   onPageChange,
-  isLoading = false,
+  loading = false,
 }) {
   const page = pagination?.page ?? 1;
   const totalPages = pagination?.totalPages ?? 1;
@@ -109,17 +109,17 @@ export default function LeaderboardTable({
             <button
               className="px-3 py-1 sm:w-[8rem] w-[6rem] cursor-pointer rounded bg-gray-200 text-gray-700 font-medium disabled:opacity-50 shadow"
               onClick={() => onPageChange?.(Math.max(1, page - 1))}
-              disabled={page === 1 || isLoading}
+              disabled={page === 1 || loading}
             >
               Previous
             </button>
             <span className="text-sm text-gray-700">
-              {isLoading ? "Loading..." : `Page ${page} of ${totalPages}`}
+              {loading ? "Loading..." : `Page ${page} of ${totalPages}`}
             </span>
             <button
               className="px-3 py-1 rounded sm:w-[8rem] w-[6rem] cursor-pointer bg-gray-200 text-gray-700 font-medium disabled:opacity-50 shadow"
               onClick={() => onPageChange?.(Math.min(totalPages, page + 1))}
-              disabled={page === totalPages || isLoading}
+              disabled={page === totalPages || loading}
             >
               Next
             </button>

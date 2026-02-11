@@ -8,15 +8,16 @@ import ReferralCodeCard from "../components/Home/ReferralCodeCard";
 import LoadingSkeleton from "../components/LoadingSkeleton.jsx"; // You'll need to create this
 import { useAuth } from "../contexts/AuthContext";
 
+const LEADERBOARD_PAGE_SIZE = 10; // Default page size for public leaderboard
+
 export default function Home() {
   const [leaderboard, setLeaderboard] = useState([]);
   const [leaderboardPagination, setLeaderboardPagination] = useState(null);
   const [leaderboardPage, setLeaderboardPage] = useState(1);
-  const LEADERBOARD_PAGE_SIZE = 10;
-  const [leaderboardLoading, setLeaderboardLoading] = useState(false);
   const [weeklyStats, setWeeklyStats] = useState(null);
   const [referralInfo, setReferralInfo] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [leaderboardLoading, setLeaderboardLoading] = useState(false);
   const [error, setError] = useState(null);
   const [userLeaderboardData, setUserLeaderboardData] = useState(null);
   const [hasUserPoints, setHasUserPoints] = useState(false);
@@ -111,18 +112,13 @@ export default function Home() {
     }
   };
 
-  const fetchDataWithoutAccount = async () => {
-    const isInitialLoad = leaderboard.length === 0;
-    if (isInitialLoad) setLoading(true);
-    else setLeaderboardLoading(true);
+  const fetchDataWithoutAccount = async (page = 1, limit = LEADERBOARD_PAGE_SIZE) => {
+    setLeaderboardLoading(true);
     setError(null);
 
     try {
       // Only call generic leaderboard when no account is connected
-      const leaderboardResponse = await apiService.getLeaderboardPoints(
-        leaderboardPage,
-        LEADERBOARD_PAGE_SIZE
-      );
+      const leaderboardResponse = await apiService.getLeaderboardPoints(page, limit);
 
       // Handle general API response structure
       const leaderboardData = Array.isArray(leaderboardResponse)
@@ -130,7 +126,21 @@ export default function Home() {
         : leaderboardResponse.data || [];
 
       setLeaderboard(leaderboardData);
-      setLeaderboardPagination(leaderboardResponse.pagination || null);
+      
+      // Extract pagination info from response
+      if (leaderboardResponse.pagination) {
+        setLeaderboardPagination(leaderboardResponse.pagination);
+      } else {
+        // If no pagination in response, create a default one
+        setLeaderboardPagination({
+          page: page,
+          limit: limit,
+          totalCount: leaderboardData.length,
+          totalPages: 1,
+          hasNext: false,
+          hasPrev: false,
+        });
+      }
 
       // Reset user-specific data when no account
       setReferralInfo(null);
@@ -141,8 +151,8 @@ export default function Home() {
       console.error("Error fetching generic leaderboard:", err);
       setError(err.message || "Failed to fetch leaderboard");
     } finally {
-      setLoading(false);
       setLeaderboardLoading(false);
+      setLoading(false);
     }
   };
 
@@ -154,12 +164,12 @@ export default function Home() {
     ) {
       fetchDataWithAccount();
     } else {
-      fetchDataWithoutAccount();
+      fetchDataWithoutAccount(leaderboardPage, LEADERBOARD_PAGE_SIZE);
     }
   }, [selectedAccount, leaderboardPage]);
 
   // Show loading skeleton while data is being fetched
-  if (loading && leaderboard.length === 0) {
+  if (loading) {
     return (
       <div className="min-h-screen">
         <Header />
@@ -238,11 +248,21 @@ export default function Home() {
           hasUserPoints) && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
-              <LeaderboardTable
-                data={leaderboard}
-                pagination={leaderboardPagination}
-                onPageChange={setLeaderboardPage}
-                isLoading={leaderboardLoading}
+              <LeaderboardTable 
+                data={leaderboard} 
+                pagination={
+                  // Only show pagination when no account is connected (public leaderboard)
+                  !(selectedAccount && (selectedAccount.evmAddress || selectedAccount.address))
+                    ? leaderboardPagination
+                    : null
+                }
+                onPageChange={
+                  // Only enable page changes for public leaderboard
+                  !(selectedAccount && (selectedAccount.evmAddress || selectedAccount.address))
+                    ? setLeaderboardPage
+                    : undefined
+                }
+                loading={leaderboardLoading}
               />
             </div>
 
