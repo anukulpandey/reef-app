@@ -43,7 +43,7 @@ import Snap from "./snap/Snap";
 import { utils } from "@reef-chain/react-lib";
 import AlchemyPay from "./alchemy-pay/AlchemyPay";
 import Validators from "./validators/Validators";
-import PointsRoot from "../points/PointsRoot";
+import PointsRoot from "../points/PointsRoot.jsx";
 
 const ContentRouter = (): JSX.Element => {
   const { reefState, selectedSigner } = useContext(ReefSigners);
