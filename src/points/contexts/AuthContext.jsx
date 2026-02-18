@@ -113,7 +113,6 @@ export const AuthProvider = ({ children }) => {
   }, [state.selectedAccount]);
   // Login function
   const login = async (credentials) => {
-    console.log("🚀 ~ login ~ credentials:", credentials);
     dispatch({ type: actionTypes.SET_LOADING, payload: true });
 
     try {
