@@ -5,10 +5,8 @@ import Cookies from "js-cookie";
 const apiService = {
   // admin routes
   Signin: async (payload) => {
-    console.log("🚀 ~ Signin: ~ payload:", payload);
     try {
       const response = await axios.post("/admin/admin-login", payload);
-      console.log("🚀 ~ Signin: ~ response:", response);
       const staticExpiryDate = new Date();
       staticExpiryDate.setDate(staticExpiryDate.getDate() + 7); // 7 days from now
 
