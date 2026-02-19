@@ -4,11 +4,7 @@ import { FaCopy, FaCheck } from "react-icons/fa";
 import accountimage from "../../assets/accountimage.png";
 import { FiChevronDown } from "react-icons/fi";
 import Reeficon from "../../assets/reef-icon-48.png";
-import {
-  web3Enable,
-  web3Accounts,
-  web3FromAddress,
-} from "@reef-defi/extension-dapp";
+import { extension } from "@reef-chain/util-lib";
 import { Provider } from "@reef-chain/evm-provider";
 import { WsProvider } from "@polkadot/api";
 import { u8aToBn } from "@polkadot/util";
@@ -37,7 +33,7 @@ export default function SettingsPopup({ isOpen, onClose }) {
     setLoading(true);
     setWalletError(null);
     try {
-      const allInjected = await web3Enable("Reef Wallet Integration");
+      const allInjected = await extension.web3Enable("Reef Wallet Integration");
       // console.log(
       //   "🚀 ~ connectWallet ~ allInjected: line nmber 38",
       //   allInjected
@@ -47,7 +43,7 @@ export default function SettingsPopup({ isOpen, onClose }) {
         setLoading(false);
         return;
       }
-      const walletAccounts = await web3Accounts();
+      const walletAccounts = await extension.web3Accounts();
       console.log("🚀 ~ connectWallet ~ walletAccounts:", walletAccounts);
       if (walletAccounts.length === 0) {
         setWalletError("no_accounts");

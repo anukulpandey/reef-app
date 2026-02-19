@@ -1,11 +1,7 @@
 import React, { useState } from "react";
 import Uik from "@reef-chain/ui-kit";
 
-import {
-  web3Enable,
-  web3Accounts,
-  web3FromAddress,
-} from "@reef-defi/extension-dapp";
+import { extension } from "@reef-chain/util-lib";
 import { Provider } from "@reef-chain/evm-provider";
 import { WsProvider } from "@polkadot/api";
 import { u8aToBn } from "@polkadot/util";
@@ -19,7 +15,7 @@ const ReefWalletConnect = () => {
   // Function to connect with Reef Wallet and get all accounts
   const connectWallet = async () => {
     // Enable Reef Wallet
-    const allInjected = await web3Enable("Reef Wallet Integration");
+    const allInjected = await extension.web3Enable("Reef Wallet Integration");
 
     // If no extension is found, prompt the user to install it
     if (allInjected.length === 0) {
@@ -28,7 +24,7 @@ const ReefWalletConnect = () => {
     }
 
     // Retrieve accounts injected by Reef Wallet
-    const accounts = await web3Accounts();
+    const accounts = await extension.web3Accounts();
     setAccounts(accounts);
 
     // If no accounts are found, prompt the user to unlock the wallet
