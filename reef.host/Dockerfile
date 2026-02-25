@@ -20,7 +20,7 @@ FROM nginx:stable-alpine
 
 WORKDIR /usr/share/nginx/html
 
-COPY docker/nginx.conf /etc/nginx/nginx.conf
+COPY reef.host/nginx.conf /etc/nginx/nginx.conf
 COPY --from=builder /apps/public /usr/share/nginx/html
 
 EXPOSE 5005
