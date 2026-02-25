@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 // Default Points API base URL (local dev). You can override at runtime via localStorage/window.
-const DEFAULT_BASE_URL = "http://localhost:3004";
+const DEFAULT_BASE_URL = "https://points.reef.host/";
 // For this webpack app, prefer runtime-configurable overrides (no rebuild needed):
 // 1) window.__POINTS_API_BASE_URL__
 // 2) localStorage["points-api-base-url"]
